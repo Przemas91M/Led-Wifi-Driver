@@ -6,8 +6,8 @@
 #define LED_PIN 5
 #define LED_COUNT 46
 
-const char *ssid = "Domek_33_3G";
-const char *pass = "281128MO";
+const char *ssid = "YOUR_SSID";
+const char *pass = "YOUR_PASSWORD";
 
 ESP8266WebServer server(80);
 
