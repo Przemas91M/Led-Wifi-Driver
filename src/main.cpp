@@ -25,6 +25,7 @@ Adafruit_NeoPixel strip(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
 String header;
 String setcolor = "#ffffff";
 
+//Strona główna, wyświetlana po połączeniu się z urządzeniem
 const char MAIN_page[] PROGMEM = R"=====(
   <!DOCTYPE HTML>
   <html lang="en">
@@ -185,6 +186,7 @@ const char MAIN_page[] PROGMEM = R"=====(
   </html> 
 )=====";
 
+//funkcja obsługująca połączenie z siecią Wi-Fi
 void ConnectToWifi()
 {
   Serial.print("Connecting to: ");
@@ -201,14 +203,15 @@ void ConnectToWifi()
   Serial.println(WiFi.localIP());
 }
 
+//ustawienie koloru na całym pasku LED RGB
 void colorWipe(uint32_t color, int wait)
 {
   rainbow_enable = false;
   for (int i = 0; i < strip.numPixels(); i++)
-  {                                // For each pixel in strip...
-    strip.setPixelColor(i, color); //  Set pixel's color (in RAM)
-    strip.show();                  //  Update strip to match
-    delay(wait);                   //  Pause for a moment
+  {                                
+    strip.setPixelColor(i, color); 
+    strip.show();                  
+    delay(wait);                   
   }
 }
 
@@ -217,10 +220,10 @@ void colorWipe(uint32_t color, int pocz, int wait)
 {
   //uint32_t zero = strip.Color(0, 0, 0);
   for (int i = pocz; i < (pocz + 23); i++)
-  {                                // For each pixel in strip...
-    strip.setPixelColor(i, color); //  Set pixel's color (in RAM)
-    strip.show();                  //  Update strip to match
-    delay(wait);                   //  Pause for a moment
+  {                                
+    strip.setPixelColor(i, color); 
+    strip.show();                  
+    delay(wait);                   
   }
   /*for (int i = pocz; i < strip.numPixels(); i++) { // For each pixel in strip...
     strip.setPixelColor(i, color);         //  Set pixel's color (in RAM)
@@ -229,15 +232,16 @@ void colorWipe(uint32_t color, int pocz, int wait)
   }*/
 }
 
+//wyświetlenie efektu tęczy
 void rainbow()
 {
   //for(long firstPixelHue = 0; firstPixelHue < 5*65536; firstPixelHue += 256) {
   if (firstPixelHue < 5 * 65536)
   {
     for (int i = 0; i < strip.numPixels(); i++)
-    { // For each pixel in strip...
+    { 
       pixelHue = firstPixelHue + (i * 65536L / strip.numPixels());
-      // before assigning to each pixel:
+      
       strip.setPixelColor(i, strip.gamma32(strip.ColorHSV(pixelHue)));
     }
     firstPixelHue += 256;
@@ -246,10 +250,11 @@ void rainbow()
   {
     firstPixelHue = 0;
   }
-  strip.show(); // Update strip with new contents
-  //delay(wait);  // Pause for a moment
+  strip.show(); 
+  //delay(wait);  
 }
 
+//wyświetlenie strony głównej
 void handleMainPage()
 {
   String p = MAIN_page;
@@ -257,6 +262,7 @@ void handleMainPage()
   server.send(200, "text/html", p);
 }
 
+//wyświetlenie strony, gdy użytkownik wybierze dany kolor paska LED RGB
 void handleColor()
 {
   setcolor = server.arg("color");
@@ -296,6 +302,7 @@ void handleMessage()
   server.send(302, "text/plain", "Updated-- Press Back Button");
 }
 
+//Wyświetlenie strony po wybraniu jasności paska LED RGB
 void handleBrightness()
 {
   String brightness = server.arg("bright");
@@ -314,6 +321,7 @@ void handle404Exception()
   server.send(404, "text/plain", "Page not found!");
 }
 
+//uruchomienie połączenia Wi-Fi, dołączenie obsługi poszczególnych stron hmtl
 void setup()
 {
   Serial.begin(115200);
@@ -374,6 +382,7 @@ void setup()
   strip.show();             // Turn OFF all pixels ASAP
 }
 
+//pętla główna programu
 void loop()
 {
   server.handleClient();
